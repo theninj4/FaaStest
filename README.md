@@ -1,8 +1,10 @@
 # FaaStest
 
-*! This module depends on the `--experimental-workers` Node.js flag, and is NOT fit for production use!*
-*! The module scheduling is crude and unfair, it is NOT fit for production use!*
-*! This is just an experiment !*
+**! This module depends on the `--experimental-workers` Node.js flag, and is NOT fit for production use !**
+
+**! The module scheduling is crude and unfair, it is NOT fit for production use !**
+
+**! This is just an experiment !**
 
 This module in an experiment to explore a Node.js Function-as-a-service runtime whereby:
  * The cost of idle functions is close to 0.
