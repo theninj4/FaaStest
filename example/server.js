@@ -2,11 +2,8 @@ const faastest = require('../.')
 const fs = require('fs')
 const assert = require('assert')
 
-faastest.configure({
-  maxWorkers: 4,
-  functionLoader: async function (module, version) {
-    return fs.promises.readFile(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
-  }
+faastest.defineFunctionLoader(async function (module, version) {
+  return fs.promises.readFile(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
 })
 
 let latencies = [ ]

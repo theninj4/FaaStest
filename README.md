@@ -23,7 +23,7 @@ This module expects you to bring your own function triggers. This gives you tota
 ## Module (Function) specification
 
  1. You must export an object.
- 2. The exported object must have properties with names matching the function's name.
+ 2. The exported object must have properties with names matching the desired function names.
  3. All functions must be `async`.
 
 ```javascript
@@ -46,17 +46,14 @@ Once the JS is bundled into a singular file, store it someplace safe.
 
 ## Module Loader
 
-In your runtime, you'll need to tell FaaStest how it can find your bundled JS. This happens in a configuration step:
+In your runtime, you'll need to tell FaaStest how it can find your bundled JS:
 
 ```javascript
 const faastest = require('../.')
 const fs = require('fs')
 
-faastest.configure({
-  maxWorkers: 40,
-  functionLoader: async function (module, version) {
-    return fs.promises.readFile(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
-  }
+faastest.defineFunctionLoader(async function (module, version) {
+  return fs.promises.readFile(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
 })
 ```
 
@@ -77,12 +74,13 @@ const result = await faastest.trigger({
 ## Under the Hood
 
  * There is a [worker_threads](https://nodejs.org/docs/latest-v10.x/api/worker_threads.html) pool of between `0` and `maxWorkers` threads.
- * As triggers are invoked, modules get `eval` loaded into the threads.
+ * `maxWorkers` is set to a vague guess based on the memory available to the process.
+ * As triggers are invoked, modules get `new vm.Script()` loaded into the threads.
  * There is one module per thread.
- * Modules will only ever be loaded into one thread at a time.
+ * Modules will only exist in one thread at a time.
  * Each thread + module will serve many requests until it is terminated in order to schedule some other module.
  * If we are below `maxWorkers` threads, new threads are created for each new module being requested.
- * If the worker pool is full, idle workers are terminated from within the worker and the next queued module is loaded in.
+ * If the worker pool is full, idle workers are terminated and the next queued modules are loaded in.
 
 ## Performance
 
@@ -91,24 +89,20 @@ Give it a go yourself via the example implementation:
 $ npm start
 ```
 
-If you have 4x functions, all under load, and you have maxWorkers set to 4, the perform looks like this:
+If all the functions you're triggering are "hot", or loaded, the performance looks like this:
 ```
-Total time: 687 ms
 Min 0.037 ms
 P50 0.301 ms
 Avg 0.632 ms
 P95 0.984 ms
-Max 124.115 ms
 ```
 
-If you have 4x funtions, all under load, and you have maxWorkers set to 3, the perform degrades due to FaaStest needing to continually spawn + terminate workers to keep requests flowing:
+If all the functions you're triggering are "cold", or need loading, the performance looks like this:
 ```
-Total time: 43,250 ms
-Min 0.035 ms
-P50 0.353 ms
-Avg 38.556 ms
-P95 126.214 ms
-Max 232.784 ms
+Min 55.48 ms
+P50 58.357 ms
+Avg 59.77 ms
+P95 69.11 ms
 ```
 
 ## Future Exploration

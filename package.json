@@ -1,8 +1,9 @@
 {
   "name": "faastest",
   "scripts": {
-    "start": "node --experimental-worker ./example/server.js"
+    "start": "node --experimental-worker ./example/server.js --max-old-space-size=100"
   },
+  "main": "lib/index.js",
   "devDependencies": {
     "rollup": "^0.67.0",
     "rollup-plugin-commonjs": "^9.2.0",
