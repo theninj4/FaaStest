@@ -2,8 +2,8 @@ const faastest = require('../.')
 const fs = require('fs')
 const assert = require('assert')
 
-faastest.defineFunctionLoader(async function (module, version) {
-  return fs.promises.readFile(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
+faastest.defineFunctionLoader(function (module, version) {
+  return fs.readFileSync(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
 })
 
 let latencies = [ ]
@@ -23,13 +23,13 @@ const loop = async function (i) {
     assert.strictEqual(result, a + b)
     process.stdout.write('.')
   }
-  console.log('\nFinished set', i)
 }
 ;(async () => {
+  await (new Promise((resolve, reject) => { setTimeout(resolve, 1500) }))
   const startTime = new Date()
   await Promise.all(Array(10).fill().map((_, i) => loop(i)))
   const duration = (new Date()) - startTime
-  console.log('Total time:', duration.toLocaleString(), 'ms')
+  console.log('\nTotal time:', duration.toLocaleString(), 'ms')
   latencies = latencies.sort((a, b) => a - b).map(a => Number(a) / (1024 * 1024))
   const total = latencies.reduce((xs, x) => xs + x, 0)
   console.log('Min', latencies[0].toLocaleString(), 'ms')

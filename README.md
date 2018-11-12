@@ -10,7 +10,7 @@ This module in an experiment to explore a Node.js Function-as-a-service runtime 
  * The cost of idle functions is close to 0.
  * Each function can bring its own set of dependencies.
  * The cost of any function loading it's dependencies on each invocation is minimised.
- * The risk of one bad function getting stuck in an infinite loop and impacting other functions is managed.
+ * The risk of one bad function getting stuck in an infinite loop and impacting other functions is *managed*.
  * The *security aspects* of running potentially untrusted code are *not yet fully understood*.
 
 This module expects you to bring your own function triggers. This gives you total freedom over how functions get invoked, for example:
@@ -73,14 +73,11 @@ const result = await faastest.trigger({
 
 ## Under the Hood
 
- * There is a [worker_threads](https://nodejs.org/docs/latest-v10.x/api/worker_threads.html) pool of between `0` and `maxWorkers` threads.
- * `maxWorkers` is set to a vague guess based on the memory available to the process.
- * As triggers are invoked, modules get `new vm.Script()` loaded into the threads.
+ * There is a [worker_threads](https://nodejs.org/docs/latest-v10.x/api/worker_threads.html) pool consisting of 10 threads.
+ * Modules get dynamically loaded via `vm.Script()` onto the threads as they're needed.
  * There is one module per thread.
  * Modules will only exist in one thread at a time.
- * Each thread + module will serve many requests until it is terminated in order to schedule some other module.
- * If we are below `maxWorkers` threads, new threads are created for each new module being requested.
- * If the worker pool is full, idle workers are terminated and the next queued modules are loaded in.
+ * Each thread + module will serve many requests until it is descheduled in order to schedule some other queued module.
 
 ## Performance
 
@@ -89,22 +86,23 @@ Give it a go yourself via the example implementation:
 $ npm start
 ```
 
-If all the functions you're triggering are "hot", or loaded, the performance looks like this:
+If all the functions you're triggering are "hot", or loaded, the performance overhead looks vaguely like this:
 ```
-Min 0.037 ms
-P50 0.301 ms
-Avg 0.632 ms
-P95 0.984 ms
+Min 0.068 ms
+P50 0.092 ms
+Avg 0.129 ms
+P95 0.186 ms
 ```
 
-If all the functions you're triggering are "cold", or need loading, the performance looks like this:
+If all the functions you're triggering are "cold", or need loading, the performance overhead looks vaguely like this:
 ```
-Min 55.48 ms
-P50 58.357 ms
-Avg 59.77 ms
-P95 69.11 ms
+Min 0.817 ms
+P50 1.039 ms
+Avg 1.227 ms
+P95 1.902 ms
 ```
 
 ## Future Exploration
 
-We may see much better performance by loading many modules into each worker, which would make managing the worker pool way more challenging.
+Error handling
+Proper benchmarking
