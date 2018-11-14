@@ -2,6 +2,13 @@ const faastest = require('../.')
 const fs = require('fs')
 const assert = require('assert')
 
+const fastify = require('fastify')()
+fastify.get('/add', async (request, reply) => {
+  reply.type('application/json').code(200)
+  return { sum: Number(request.query.a) + Number(request.query.b) }
+})
+fastify.listen(3000)
+
 faastest.defineFunctionLoader(function (module, version) {
   return fs.readFileSync(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
 })
@@ -39,3 +46,10 @@ const loop = async function (i) {
   console.log('Max', latencies[latencies.length - 1].toLocaleString(), 'ms')
   process.exit()
 })()
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection in Test at: ', reason)
+})
+process.on('uncaughtException', (e) => {
+  console.log('Uncaught Exception in Test at: ', e.message, '\n', e.stack)
+})

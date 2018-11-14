@@ -39,7 +39,7 @@ Functions are namespaced by:
 
 During your CI deploy process, you'll need to use something like `rollup` to bundle your function, and it's dependencies into a singular JS file. This repo contains a rollup config used to generate the examples:
 ```
-$ rollup ./example/code/calculator-v1.0.0-raw.js -c --format=cjs > ./example/code/calculator-v1.0.0.js
+$ rollup ./example/code/calculator-v1.0.0-raw.js -c --format=cjs > ./example/code/calculatorA-v1.0.0.js
 ```
 
 Once the JS is bundled into a singular file, store it someplace safe.
