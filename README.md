@@ -22,27 +22,34 @@ This module expects you to bring your own function triggers. This gives you tota
 
 ## Module (Function) specification
 
- 1. You must export an object.
- 2. The exported object must have properties with names matching the desired function names.
- 3. All functions must be `async`.
+ 1. You *should* write ES Modules.
+ 2. The exported functions *must* be `async`.
+ 3. You may export many functions.
 
 ```javascript
-const calculator = module.exports = { }
+import { promisify } from 'util'
+const pause = promisify(setTimeout)
 
-calculator.add = async function () { }
-calculator.subtract = async function () { }
+export async function add (payload) {
+  await pause(10)
+  return payload.a + payload.b
+}
 ```
 
 Functions are namespaced by:
  * Module name and version.
  * Function name within module.
 
-During your CI deploy process, you'll need to use something like `rollup` to bundle your function, and it's dependencies into a singular JS file. This repo contains a rollup config used to generate the examples:
+During your CI deploy process, you'll need to use something like `rollup` to bundle your function and it's dependencies into a singular JS file. This repo contains a rollup config used to generate the examples:
 ```
 $ rollup ./example/code/calculator-v1.0.0-raw.js -c --format=cjs > ./example/code/calculatorA-v1.0.0.js
 ```
 
-Once the JS is bundled into a singular file, store it someplace safe.
+Once the JS is bundled into a singular file, store it someplace safe. You'll need to provide access to it later.
+
+On the subject of dependencies, you'll want to seek out lightweight alternatives to some of the heavy popular modules on NPM. You can use these kinds of tools to manage your package sizes:
+ * [BundlePhobia](https://bundlephobia.com/) - Web UI, also suggests similar smaller alternatives!
+ * [Cost of modules](https://github.com/siddharthkp/cost-of-modules) - For the terminal
 
 ## Module Loader
 

@@ -1,11 +1,12 @@
-const calculator = module.exports = { }
+import fetch from 'node-fetch'
+import dayjs from 'dayjs'
+import { promisify } from 'util'
+const wait = promisify(setTimeout)
 
-const fetch = require('node-fetch')
-const wait = (ms) => new Promise((resolve, reject) => { setTimeout(resolve, ms) })
-
-calculator.add = async function (payload) {
+export async function add (payload) {
   const res = await fetch(`http://localhost:3000/add?a=${payload.a}&b=${payload.b}`)
-  const json = res.json()
-  await wait(1)
+  const json = await res.json()
+  const today = dayjs().format('s') / 1
+  await wait(today)
   return json.sum
 }

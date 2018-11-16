@@ -5,6 +5,7 @@
   },
   "main": "lib/index.js",
   "devDependencies": {
+    "dayjs": "^1.7.7",
     "fastify": "^1.13.0",
     "node-fetch": "2.3.0",
     "rollup": "^0.67.0",
