@@ -40,9 +40,10 @@ Functions are namespaced by:
  * Module name and version.
  * Function name within module.
 
-During your CI deploy process, you'll need to use something like `rollup` to bundle your function and it's dependencies into a singular JS file. This repo contains a rollup config used to generate the examples:
+During your CI deploy process, you'll need to use something like `rollup` to bundle your function and it's dependencies into a singular JS file. This repo contains a rollup config used to generate the examples and we ship with a ease-of-access wrapper:
 ```
-$ rollup ./example/code/calculator-v1.0.0-raw.js -c --format=cjs > ./example/code/calculatorA-v1.0.0.js
+$ npm i -g github:theninj4/faastest
+$ faastest-bundle -i ./example/code/calculator-v1.0.0-raw.js -o ./example/code/calculatorA-v1.0.0.js
 ```
 
 Once the JS is bundled into a singular file, store it someplace safe. You'll need to provide access to it later.
