@@ -10,12 +10,12 @@ fastify.get('/add', async (request, reply) => {
 fastify.listen(3000)
 
 faastest.defineFunctionLoader(function (module, version) {
-  return fs.readFileSync(`${__dirname}/code/${module}-${version}.js`, { encoding: 'utf8' })
+  return fs.readFileSync(`${__dirname}/code/compiled/${module}-${version}.js`, { encoding: 'utf8' })
 })
 
 let latencies = [ ]
 const loop = async function (i) {
-  for (let j = 0; j < 1000; j++) {
+  for (let j = 0; j < 300; j++) {
     const a = Math.floor(Math.random() * 999)
     const b = Math.floor(Math.random() * 999)
     const f = Math.floor(Math.random() * 10)

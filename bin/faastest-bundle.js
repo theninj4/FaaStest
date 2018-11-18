@@ -5,11 +5,21 @@ const { execSync } = require('child_process')
 
 const inputFile = argv.i || argv.input
 const outputFile = argv.o || argv.output
-if (!inputFile || !outputFile) {
+const plainArgs = argv._
+if (!(inputFile && outputFile && plainArgs.length === 0) && (!inputFile && !outputFile && plainArgs.length < 2)) {
   console.log(`Usage:
-$ faatest-bundle -i [inputFile] -o [outputFile]
+$ faastest-bundle -i [inputFile] -o [outputFile]
+$ faastest-bundle [inputFileGlob] [outputFolder]
 `)
   process.exit(1)
 }
 
-execSync(`${__dirname}/../node_modules/.bin/rollup ${cwd}/${inputFile} -c ${__dirname}/../rollup.config.js --format=cjs > ${cwd}/${outputFile}`)
+if (inputFile && outputFile) {
+  execSync(`${__dirname}/../node_modules/.bin/rollup ${cwd}/${inputFile} -c ${__dirname}/../rollup.config.js --format=cjs > ${cwd}/${outputFile}`)
+} else {
+  const outputFolder = plainArgs.pop()
+  plainArgs.forEach(inputFile => {
+    const outputFile = inputFile.split('/').pop()
+    execSync(`${__dirname}/../node_modules/.bin/rollup ${cwd}/${inputFile} -c ${__dirname}/../rollup.config.js --format=cjs > ${cwd}/${outputFolder}/${outputFile}`)
+  })
+}

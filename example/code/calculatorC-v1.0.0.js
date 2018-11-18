@@ -1,15 +1,12 @@
-'use strict';
+import fetch from 'node-fetch'
+import dayjs from 'dayjs'
+import { promisify } from 'util'
+const wait = promisify(setTimeout)
 
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
+export async function add (payload) {
+  const res = await fetch(`http://localhost:3000/add?a=${payload.a}&b=${payload.b}`)
+  const json = await res.json()
+  const today = dayjs().format('s') / 1
+  await wait(today)
+  return json.sum
 }
-
-var calculatorV1_0_0Raw = createCommonjsModule(function (module) {
-const calculator = module.exports = { };
-
-calculator.add = function (payload) {
-  return payload.a + payload.b
-};
-});
-
-module.exports = calculatorV1_0_0Raw;

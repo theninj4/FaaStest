@@ -44,6 +44,8 @@ During your CI deploy process, you'll need to use something like `rollup` to bun
 ```
 $ npm i -g github:theninj4/faastest
 $ faastest-bundle -i ./example/code/calculator-v1.0.0-raw.js -o ./example/code/calculatorA-v1.0.0.js
+--or--
+$ faastest-bundle ./example/code/*.js ./example/code/compiled/
 ```
 
 Once the JS is bundled into a singular file, store it someplace safe. You'll need to provide access to it later.
