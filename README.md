@@ -6,7 +6,7 @@
 
 **! This is just an experiment !**
 
-This module in an experiment to explore a Node.js Function-as-a-service runtime whereby:
+This module is an experiment to explore a Node.js Function-as-a-service runtime whereby:
  * The cost of idle functions is close to 0.
  * Each function can bring its own set of dependencies.
  * The cost of any function loading it's dependencies on each invocation is minimised.
